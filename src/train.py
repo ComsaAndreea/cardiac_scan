@@ -1,0 +1,1 @@
+# aici antrenam modelul

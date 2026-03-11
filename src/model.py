@@ -1,0 +1,1 @@
+# se defineste modelul AI

@@ -9,7 +9,7 @@ from src.datasetloader import load_nifti_with_spacing
 
 def test_full_pipeline():
     # 📁 alegem un pacient
-    patient_id = "026"
+    patient_id = "011"
 
     image_path = f"../data/raw/imagesTr/la_{patient_id}.nii"
     mask_path = f"../data/raw/labelsTr/la_{patient_id}.nii"

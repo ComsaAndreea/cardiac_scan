@@ -2,7 +2,6 @@ import torch
 from torch.utils.data import Dataset
 import numpy as np
 
-
 class HeartDataset(Dataset):
     def __init__(self, X, Y):
         self.X = X

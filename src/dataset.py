@@ -1,1 +1,0 @@
-# citeste imaginile MRI / CT

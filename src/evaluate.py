@@ -1,1 +1,0 @@
-# aici masuram performanta

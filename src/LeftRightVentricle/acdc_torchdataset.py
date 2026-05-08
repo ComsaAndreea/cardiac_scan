@@ -1,11 +1,12 @@
 import torch
 from torch.utils.data import Dataset
 import numpy as np
-import cv2
+
+from src.utils.preprocessing import normalize_image, pad_to_size
 
 
 class ACDCDataset(Dataset):
-    def __init__(self, X, Y, size=(256, 256)):
+    def __init__(self, X, Y, size=(512, 512)):
         self.X = X
         self.Y = Y
         self.size = size
@@ -17,10 +18,10 @@ class ACDCDataset(Dataset):
         image = self.X[idx]
         mask = self.Y[idx]
 
-        image = cv2.resize(image, self.size)
-        mask = cv2.resize(mask, self.size)
+        image = pad_to_size(image, self.size, value=0)
+        mask = pad_to_size(mask, self.size, value=0)
 
-        image = (image - np.min(image)) / (np.max(image) - np.min(image) + 1e-8)
+        image = normalize_image(image)
 
         image = torch.tensor(image, dtype=torch.float32)
         mask = torch.tensor(mask, dtype=torch.float32)

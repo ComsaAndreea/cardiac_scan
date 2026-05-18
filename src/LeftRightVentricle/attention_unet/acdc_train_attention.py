@@ -2,7 +2,7 @@ import os
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 sys.path.append(str(PROJECT_ROOT))
 
 import torch
@@ -14,7 +14,7 @@ from src.LeftRightVentricle.acdc_torchdataset import ACDCDataset
 from src.LeftRightVentricle.acdc_datasetloader import load_acdc_dataset
 
 
-EPOCHS = 30
+EPOCHS = 10
 BATCH_SIZE = 4
 LR = 0.001
 TARGET_SIZE = (512, 448)
@@ -67,6 +67,7 @@ def train_acdc_attention(X, Y, model_path, epochs=EPOCHS, batch_size=BATCH_SIZE,
     print("\n==============================")
     print(f"ACDC ATTENTION U-NET TRAINING: {model_path.name}")
     print("==============================")
+    print(f"Project root: {PROJECT_ROOT}")
     print(f"Data root: {DATA_ROOT}")
     print(f"Model path: {model_path}")
     print(f"Target size: {TARGET_SIZE}")
@@ -117,13 +118,15 @@ def main():
     print("\n==============================")
     print("LOADING ACDC DATASET")
     print("==============================")
+    print(f"PROJECT_ROOT: {PROJECT_ROOT}")
     print(f"ACDC_DATA_ROOT: {ACDC_DATA_ROOT}")
     print(f"Training folder: {DATA_ROOT}")
 
     if not DATA_ROOT.exists():
         raise FileNotFoundError(
             f"Nu există folderul de training: {DATA_ROOT}\n"
-            "În Colab structura trebuie să fie: /content/data/ResourcesACDC/training"
+            "În Colab structura trebuie să fie: /content/data/ResourcesACDC/training\n"
+            "Local, setează ACDC_DATA_ROOT către folderul care conține training/ și testing/."
         )
 
     X_lv, Y_lv = load_acdc_dataset(str(DATA_ROOT), target="LV")

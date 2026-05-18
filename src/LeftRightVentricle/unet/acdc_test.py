@@ -1,4 +1,3 @@
-import os
 import random
 from pathlib import Path
 
@@ -14,7 +13,7 @@ from src.utils.preprocessing import normalize_image, pad_to_size
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-ACDC_TEST_DIR = PROJECT_ROOT / "data" / "raw" / "LRVentricle" / "testing"
+ACDC_TEST_DIR = PROJECT_ROOT / "data" / "raw" / "LRVentricle" / "training"
 
 MODEL_LV_PATH = PROJECT_ROOT / "model_lv.pth"
 MODEL_RV_PATH = PROJECT_ROOT / "model_rv.pth"

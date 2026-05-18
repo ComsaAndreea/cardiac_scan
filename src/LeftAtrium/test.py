@@ -1,3 +1,7 @@
+#######################
+#cu labelsTs
+######################
+
 import os
 import random
 from pathlib import Path
@@ -13,8 +17,8 @@ from src.analysis.metrics import compute_area, compute_volume
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-IMAGES_TS_DIR = PROJECT_ROOT / "data" / "raw" / "LeftAtrium" / "imagesTs"
-LABELS_TS_DIR = PROJECT_ROOT / "data" / "raw" / "LeftAtrium" / "labelsTs"
+IMAGES_TS_DIR = PROJECT_ROOT / "data" / "raw" / "LeftAtrium" / "imagesTr"
+LABELS_TS_DIR = PROJECT_ROOT / "data" / "raw" / "LeftAtrium" / "labelsTr"
 
 MODEL_PATH = PROJECT_ROOT / "model_leftatrium.pth"
 
@@ -177,3 +181,150 @@ def test_left_atrium():
 
 if __name__ == "__main__":
     test_left_atrium()
+
+#############################
+#fara labelsTs
+#############################
+#
+# import random
+# from pathlib import Path
+#
+# import torch
+# import numpy as np
+# import matplotlib.pyplot as plt
+#
+# from src.models.unet import UNet
+# from src.LeftAtrium.datasetloader import load_nifti_with_spacing
+# from src.analysis.metrics import compute_area, compute_volume
+#
+#
+# PROJECT_ROOT = Path(__file__).resolve().parents[2]
+#
+# IMAGES_TS_DIR = PROJECT_ROOT / "data" / "raw" / "LeftAtrium" / "imagesTs"
+# MODEL_PATH = PROJECT_ROOT / "model_leftatrium.pth"
+#
+#
+# def normalize_image(image):
+#     return (image - np.min(image)) / (np.max(image) - np.min(image) + 1e-8)
+#
+#
+# def find_test_images():
+#     if not IMAGES_TS_DIR.exists():
+#         raise FileNotFoundError(f"Nu există folderul de imagini test: {IMAGES_TS_DIR}")
+#
+#     images = []
+#
+#     for image_file in sorted(IMAGES_TS_DIR.iterdir()):
+#         if image_file.name.startswith("._"):
+#             continue
+#
+#         if image_file.name.endswith(".nii") or image_file.name.endswith(".nii.gz"):
+#             images.append(image_file)
+#
+#     if len(images) == 0:
+#         raise FileNotFoundError(f"Nu am găsit imagini test în: {IMAGES_TS_DIR}")
+#
+#     return images
+#
+#
+# def predict_volume(model, volume):
+#     pred_slices = []
+#
+#     model.eval()
+#
+#     for i in range(volume.shape[0]):
+#         img = volume[i]
+#         img = normalize_image(img)
+#
+#         tensor = torch.tensor(img, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
+#
+#         with torch.no_grad():
+#             output = model(tensor)
+#             prob = torch.sigmoid(output)
+#
+#         pred = prob.squeeze().cpu().numpy()
+#         pred_binary = (pred > 0.5).astype(np.float32)
+#
+#         pred_slices.append(pred_binary)
+#
+#     return np.array(pred_slices)
+#
+#
+# def choose_representative_slice(pred_volume):
+#     areas = [np.sum(pred_volume[i] > 0) for i in range(pred_volume.shape[0])]
+#     return int(np.argmax(areas))
+#
+#
+# def show_left_atrium_prediction(volume, pred_volume, spacing, patient_name):
+#     slice_idx = choose_representative_slice(pred_volume)
+#
+#     image_slice = volume[slice_idx]
+#     pred_slice = pred_volume[slice_idx]
+#
+#     area_pred = compute_area(pred_slice, spacing)
+#     volume_pred = compute_volume(pred_volume, spacing)
+#
+#     print("\n==============================")
+#     print("LEFT ATRIUM TEST - PREDICTION ONLY")
+#     print("==============================")
+#     print(f"Pacient test random: {patient_name}")
+#     print(f"Volume shape: {volume.shape}")
+#     print(f"Spacing: {spacing}")
+#     print(f"Slice afișat: {slice_idx}")
+#     print("------------------------------")
+#     print(f"Arie Prediction:   {area_pred:.2f} cm²")
+#     print(f"Volum Prediction:  {volume_pred:.2f} mL")
+#     print("==============================\n")
+#
+#     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+#
+#     axes[0].imshow(image_slice, cmap="gray")
+#     axes[0].set_title("Original image")
+#     axes[0].axis("off")
+#
+#     axes[1].imshow(pred_slice, cmap="gray")
+#     axes[1].set_title("Prediction")
+#     axes[1].axis("off")
+#
+#     axes[2].imshow(image_slice, cmap="gray")
+#     axes[2].imshow(pred_slice, alpha=0.35, cmap="Reds")
+#     axes[2].set_title("Overlay: Prediction red")
+#     axes[2].axis("off")
+#
+#     plt.suptitle(
+#         f"{patient_name}\n"
+#         f"Pred area={area_pred:.2f} cm² | Pred volume={volume_pred:.2f} mL"
+#     )
+#
+#     plt.tight_layout()
+#     plt.show()
+#
+#
+# def test_left_atrium():
+#     if not MODEL_PATH.exists():
+#         raise FileNotFoundError(
+#             f"Nu există modelul: {MODEL_PATH}\n"
+#             "Antrenează mai întâi modelul Left Atrium."
+#         )
+#
+#     test_images = find_test_images()
+#     image_path = random.choice(test_images)
+#
+#     volume, spacing = load_nifti_with_spacing(str(image_path))
+#
+#     model = UNet()
+#     model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+#     model.eval()
+#
+#     pred_volume = predict_volume(model, volume)
+#
+#     show_left_atrium_prediction(
+#         volume=volume,
+#         pred_volume=pred_volume,
+#         spacing=spacing,
+#         patient_name=image_path.name
+#     )
+#
+#
+# if __name__ == "__main__":
+#     test_left_atrium()

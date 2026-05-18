@@ -73,11 +73,11 @@ def evaluate_acdc():
     root = "../../data/raw/LRVentricle/training"
 
     model_lv = UNet()
-    model_lv.load_state_dict(torch.load("../../model_lv.pth"))
+    model_lv.load_state_dict(torch.load("../../../model_lv.pth"))
     model_lv.eval()
 
     model_rv = UNet()
-    model_rv.load_state_dict(torch.load("../../model_rv.pth"))
+    model_rv.load_state_dict(torch.load("../../../model_rv.pth"))
     model_rv.eval()
 
     results = []
@@ -200,7 +200,7 @@ def evaluate_acdc():
 
     # 📊 CSV
     df = pd.DataFrame(results)
-    os.makedirs("../../experiments", exist_ok=True)
+    os.makedirs("../../../experiments", exist_ok=True)
     df.to_csv("../../experiments/lrv_results_unet.csv", index=False)
 
     print("✔ Results saved: experiments/lrv_results_unet.csv")

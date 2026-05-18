@@ -21,7 +21,7 @@
 #     test_patient("../data/raw/LRVentricle/training/patient001")
 
 from src.LeftRightVentricle.acdc_datasetloader import load_acdc_dataset
-from src.LeftRightVentricle.acdc_train import train_acdc
+from src.LeftRightVentricle.unet.acdc_train import train_acdc
 
 
 if __name__ == "__main__":

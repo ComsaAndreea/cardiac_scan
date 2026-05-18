@@ -24,7 +24,7 @@ ACDC_DATA_ROOT = Path(
     )
 )
 
-ACDC_SPLIT = os.environ.get("ACDC_EVAL_SPLIT", "training")
+ACDC_SPLIT = os.environ.get("ACDC_EVAL_SPLIT", "testing")
 ACDC_DIR = ACDC_DATA_ROOT / ACDC_SPLIT
 
 OUTPUT_DIR = PROJECT_ROOT / "experiments"

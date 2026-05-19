@@ -20,15 +20,15 @@ TARGET_SIZE = (512, 448)
 ACDC_DATA_ROOT = Path(
     os.environ.get(
         "ACDC_DATA_ROOT",
-        str(PROJECT_ROOT.parent / "data" / "ResourcesACDC")
+        str(PROJECT_ROOT.parent / "data" / "raw" / "LRVentricle")
     )
 )
 
-ACDC_TEST_SPLIT = os.environ.get("ACDC_TEST_SPLIT", "training")
+ACDC_TEST_SPLIT = os.environ.get("ACDC_TEST_SPLIT", "testing")
 ACDC_TEST_DIR = ACDC_DATA_ROOT / ACDC_TEST_SPLIT
 
-MODEL_LV_PATH = PROJECT_ROOT / "model_lv_attention.pth"
-MODEL_RV_PATH = PROJECT_ROOT / "model_rv_attention.pth"
+MODEL_LV_PATH = PROJECT_ROOT / "LeftRightVentricle" / "attention_unet" / "model_lv_attention.pth"
+MODEL_RV_PATH = PROJECT_ROOT / "LeftRightVentricle" / "attention_unet" / "model_rv_attention.pth"
 
 
 def get_device():

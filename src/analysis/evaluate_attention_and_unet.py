@@ -37,13 +37,13 @@ SUMMARY_CSV = OUTPUT_DIR / "acdc_model_comparison_summary.csv"
 MODELS = {
     "unet": {
         "class": UNet,
-        "lv_path": PROJECT_ROOT / "model_lv.pth",
-        "rv_path": PROJECT_ROOT / "model_rv.pth",
+        "lv_path": PROJECT_ROOT / "src" / "LeftRightVentricle" / "unet" / "model_lv.pth" ,
+        "rv_path": PROJECT_ROOT / "src" / "LeftRightVentricle" / "unet" / "model_rv.pth",
     },
     "attention_unet": {
         "class": AttentionUNet,
-        "lv_path": PROJECT_ROOT / "model_lv_attention.pth",
-        "rv_path": PROJECT_ROOT / "model_rv_attention.pth",
+        "lv_path": PROJECT_ROOT / "src" / "LeftRightVentricle" / "attention_unet" / "model_lv_attention.pth",
+        "rv_path": PROJECT_ROOT / "src" / "LeftRightVentricle" / "attention_unet" / "model_rv_attention.pth",
     }
 }
 

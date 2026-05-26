@@ -5,7 +5,7 @@ import pandas as pd
 import cv2
 
 from src.models.unet import UNet
-from src.LeftRightVentricle.acdc_datasetloader import load_nifti_with_spacing, read_info_cfg
+from src.LeftRightVentricle_ACDC.acdc_datasetloader import load_nifti_with_spacing, read_info_cfg
 from src.analysis.metrics import compute_volume, compute_area
 
 

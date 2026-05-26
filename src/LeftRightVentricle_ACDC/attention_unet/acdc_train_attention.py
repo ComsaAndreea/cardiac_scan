@@ -10,8 +10,8 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from src.models.attention_unet import AttentionUNet
-from src.LeftRightVentricle.acdc_torchdataset import ACDCDataset
-from src.LeftRightVentricle.acdc_datasetloader import load_acdc_dataset
+from src.LeftRightVentricle_ACDC.acdc_torchdataset import ACDCDataset
+from src.LeftRightVentricle_ACDC.acdc_datasetloader import load_acdc_dataset
 
 
 EPOCHS = 10

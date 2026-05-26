@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 from src.models.unet import UNet
-from src.LeftRightVentricle.acdc_datasetloader import load_nifti_with_spacing, read_info_cfg
+from src.LeftRightVentricle_ACDC.acdc_datasetloader import load_nifti_with_spacing, read_info_cfg
 from src.utils.preprocessing import normalize_image, pad_to_size
 
 

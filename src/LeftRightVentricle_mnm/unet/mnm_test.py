@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from src.models.unet import UNet
-from src.LeftRightVentricle_mnm.mnm_datasetloader import load_nifti_with_spacing, find_image_label_pairs
+from src.LeftRightVentricle_mnm.mnm_datasetloader import load_nifti_with_spacing, find_mnm2_long_axis_pairs
 from src.utils.preprocessing import normalize_image, pad_to_size
 
 
@@ -180,8 +180,8 @@ def main():
     if not MODEL_RV_PATH.exists():
         raise FileNotFoundError(f"Nu există modelul RV: {MODEL_RV_PATH}")
 
-    pairs = find_image_label_pairs(TEST_DIR)
-    image_path, label_path = random.choice(pairs)
+    pairs = find_mnm2_long_axis_pairs(TEST_DIR)
+    patient, phase, image_path, label_path = random.choice(pairs)
 
     volume, spacing = load_nifti_with_spacing(image_path)
     gt_volume, _ = load_nifti_with_spacing(label_path)
@@ -206,7 +206,7 @@ def main():
         pred_lv=pred_lv,
         pred_rv=pred_rv,
         spacing=spacing,
-        patient_name=image_path.name
+        patient_name=f"{patient}_{phase}"
     )
 
 

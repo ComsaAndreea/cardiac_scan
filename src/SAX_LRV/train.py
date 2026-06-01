@@ -28,7 +28,7 @@ NUM_CLASSES = 4
 DATA_ROOT = Path(
     os.environ.get(
         "SAX_DATA_ROOT",
-        str("/kaggle/input/datasets/comsaandreea/heart-sax-mri/CombinedSAX_ED_split")
+        str("/kaggle/working/data/CombinedSAX_ED_split")
             #PROJECT_ROOT.parent / "data" / "CombinedSAX_ED_split")
     )
 )

@@ -51,17 +51,31 @@ def find_image_label_pairs(split_dir):
 
     pairs = []
 
-    for image_path in sorted(images_dir.glob("*.nii.gz")):
-        label_name = image_path.name.replace(".nii.gz", "_gt.nii.gz")
+    image_files = list(images_dir.glob("*.nii")) + list(images_dir.glob("*.nii.gz"))
+
+    for image_path in sorted(image_files):
+        if image_path.name.endswith("_gt.nii") or image_path.name.endswith("_gt.nii.gz"):
+            continue
+
+        if image_path.name.endswith(".nii.gz"):
+            label_name = image_path.name.replace(".nii.gz", "_gt.nii.gz")
+        elif image_path.name.endswith(".nii"):
+            label_name = image_path.name.replace(".nii", "_gt.nii")
+        else:
+            continue
+
         label_path = labels_dir / label_name
 
         if label_path.exists():
             pairs.append((image_path, label_path))
         else:
             print(f"Lipsește label pentru: {image_path.name}")
+            print(f"Mă așteptam la: {label_name}")
 
     if len(pairs) == 0:
         raise FileNotFoundError(f"Nu am găsit perechi image-label în {split_dir}")
+
+    print(f"Perechi image-label găsite: {len(pairs)}")
 
     return pairs
 

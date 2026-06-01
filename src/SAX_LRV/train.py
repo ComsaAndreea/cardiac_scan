@@ -28,7 +28,8 @@ NUM_CLASSES = 4
 DATA_ROOT = Path(
     os.environ.get(
         "SAX_DATA_ROOT",
-        str(PROJECT_ROOT.parent / "data" / "CombinedSAX_ED_split")
+        str("/kaggle/input/datasets/comsaandreea/sax-combined/CombinedSAX_ED_split")
+            #PROJECT_ROOT.parent / "data" / "CombinedSAX_ED_split")
     )
 )
 
@@ -45,6 +46,7 @@ MODEL_PATH = MODEL_DIR / f"{MODEL_TYPE}_sax_lrv_multiclass_last.pth"
 BEST_MODEL_PATH = MODEL_DIR / f"{MODEL_TYPE}_sax_lrv_multiclass_best.pth"
 TRAIN_LOG_CSV = LOG_DIR / f"{MODEL_TYPE}_training_log.csv"
 
+CHECKPOINT_PATH = MODEL_DIR / f"{MODEL_TYPE}_sax_lrv_checkpoint.pth"
 
 def get_device():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -158,12 +160,30 @@ def train():
         weight_decay=WEIGHT_DECAY
     )
 
+    start_epoch = 1
     best_val_loss = float("inf")
     best_epoch = 0
     epochs_without_improvement = 0
     log_rows = []
 
-    for epoch in range(1, EPOCHS + 1):
+    if CHECKPOINT_PATH.exists():
+        print(f"Loading checkpoint: {CHECKPOINT_PATH}")
+        checkpoint = torch.load(CHECKPOINT_PATH, map_location=device)
+
+        model.load_state_dict(checkpoint["model_state_dict"])
+        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+
+        start_epoch = checkpoint["epoch"] + 1
+        best_val_loss = checkpoint["best_val_loss"]
+        best_epoch = checkpoint["best_epoch"]
+        epochs_without_improvement = checkpoint["epochs_without_improvement"]
+        log_rows = checkpoint.get("log_rows", [])
+
+        print(f"Continuing from epoch {start_epoch}")
+        print(f"Best epoch so far: {best_epoch}")
+        print(f"Best val loss so far: {best_val_loss:.4f}")
+
+    for epoch in range(start_epoch, EPOCHS + 1):
         train_loss = run_epoch(
             model=model,
             loader=train_loader,
@@ -193,6 +213,18 @@ def train():
             epochs_without_improvement += 1
 
         torch.save(model.state_dict(), MODEL_PATH)
+
+        torch.save({
+            "epoch": epoch,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "best_val_loss": best_val_loss,
+            "best_epoch": best_epoch,
+            "epochs_without_improvement": epochs_without_improvement,
+            "log_rows": log_rows,
+            "model_type": MODEL_TYPE,
+        }, CHECKPOINT_PATH)
+        print(f"Checkpoint saved at: {CHECKPOINT_PATH}")
 
         log_rows.append({
             "epoch": epoch,

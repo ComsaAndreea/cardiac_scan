@@ -19,7 +19,6 @@ MODEL_TYPE = os.environ.get("MODEL_TYPE", "unet")
 EPOCHS = int(os.environ.get("EPOCHS", "100"))
 BATCH_SIZE = int(os.environ.get("BATCH_SIZE", "4"))
 LR = float(os.environ.get("LR", "0.001"))
-WEIGHT_DECAY = float(os.environ.get("WEIGHT_DECAY", "1e-5"))
 PATIENCE = int(os.environ.get("PATIENCE", "8"))
 
 TARGET_SIZE = (512, 512)
@@ -28,8 +27,7 @@ NUM_CLASSES = 4
 DATA_ROOT = Path(
     os.environ.get(
         "SAX_DATA_ROOT",
-        str("/kaggle/working/data/CombinedSAX_ED_split")
-            #PROJECT_ROOT.parent / "data" / "CombinedSAX_ED_split")
+        "/kaggle/working/data/CombinedSAX_ED_split"
     )
 )
 
@@ -42,11 +40,11 @@ MODEL_DIR.mkdir(parents=True, exist_ok=True)
 LOG_DIR = PROJECT_ROOT / "experiments" / "SAX_LRV"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-MODEL_PATH = MODEL_DIR / f"{MODEL_TYPE}_sax_lrv_multiclass_last.pth"
-BEST_MODEL_PATH = MODEL_DIR / f"{MODEL_TYPE}_sax_lrv_multiclass_best.pth"
-TRAIN_LOG_CSV = LOG_DIR / f"{MODEL_TYPE}_training_log.csv"
+MODEL_PATH = MODEL_DIR / f"{MODEL_TYPE}_sax_lrv_multiclass_last_clean.pth"
+BEST_MODEL_PATH = MODEL_DIR / f"{MODEL_TYPE}_sax_lrv_multiclass_best_clean.pth"
+TRAIN_LOG_CSV = LOG_DIR / f"{MODEL_TYPE}_training_log_clean.csv"
+CHECKPOINT_PATH = MODEL_DIR / f"{MODEL_TYPE}_sax_lrv_checkpoint_clean.pth"
 
-CHECKPOINT_PATH = MODEL_DIR / f"{MODEL_TYPE}_sax_lrv_checkpoint.pth"
 
 def get_device():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -87,12 +85,7 @@ def save_log(log_rows):
     with open(TRAIN_LOG_CSV, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
-            fieldnames=[
-                "epoch",
-                "train_loss",
-                "val_loss",
-                "is_best"
-            ]
+            fieldnames=["epoch", "train_loss", "val_loss", "is_best"]
         )
         writer.writeheader()
         writer.writerows(log_rows)
@@ -102,7 +95,7 @@ def train():
     device = get_device()
 
     print("\n==============================")
-    print("SAX LRV MULTICLASS TRAINING")
+    print("SAX LRV MULTICLASS TRAINING - CLEAN")
     print("==============================")
     print(f"Model type: {MODEL_TYPE}")
     print(f"Train dir: {TRAIN_DIR}")
@@ -110,7 +103,8 @@ def train():
     print(f"Max epochs: {EPOCHS}")
     print(f"Batch size: {BATCH_SIZE}")
     print(f"Learning rate: {LR}")
-    print(f"Weight decay: {WEIGHT_DECAY}")
+    print("Weight decay: 0")
+    print("Augmentation: False")
     print(f"Patience: {PATIENCE}")
     print(f"Last model: {MODEL_PATH}")
     print(f"Best model: {BEST_MODEL_PATH}")
@@ -124,7 +118,7 @@ def train():
         X_train,
         Y_train,
         size=TARGET_SIZE,
-        augment=True
+        augment=False
     )
 
     val_dataset = SAXLRVDataset(
@@ -156,8 +150,7 @@ def train():
 
     optimizer = torch.optim.Adam(
         model.parameters(),
-        lr=LR,
-        weight_decay=WEIGHT_DECAY
+        lr=LR
     )
 
     start_epoch = 1
@@ -214,6 +207,15 @@ def train():
 
         torch.save(model.state_dict(), MODEL_PATH)
 
+        log_rows.append({
+            "epoch": epoch,
+            "train_loss": train_loss,
+            "val_loss": val_loss,
+            "is_best": int(is_best)
+        })
+
+        save_log(log_rows)
+
         torch.save({
             "epoch": epoch,
             "model_state_dict": model.state_dict(),
@@ -224,16 +226,6 @@ def train():
             "log_rows": log_rows,
             "model_type": MODEL_TYPE,
         }, CHECKPOINT_PATH)
-        print(f"Checkpoint saved at: {CHECKPOINT_PATH}")
-
-        log_rows.append({
-            "epoch": epoch,
-            "train_loss": train_loss,
-            "val_loss": val_loss,
-            "is_best": int(is_best)
-        })
-
-        save_log(log_rows)
 
         print(
             f"Epoch {epoch}/{EPOCHS} | "
@@ -245,6 +237,8 @@ def train():
 
         if is_best:
             print("Best model updated.")
+
+        print(f"Checkpoint saved at: {CHECKPOINT_PATH}")
 
         if epochs_without_improvement >= PATIENCE:
             print("\nEarly stopping triggered.")
@@ -258,6 +252,7 @@ def train():
     print(f"Best validation loss: {best_val_loss:.4f}")
     print(f"Best model saved at: {BEST_MODEL_PATH}")
     print(f"Last model saved at: {MODEL_PATH}")
+    print(f"Checkpoint saved at: {CHECKPOINT_PATH}")
     print(f"Training log saved at: {TRAIN_LOG_CSV}")
     print("==============================")
 

@@ -15,20 +15,20 @@ from src.SAX_LRV.sax_datasetloader import find_image_label_pairs, load_nifti_wit
 from src.utils.preprocessing import normalize_image, pad_to_size
 
 
-MODEL_TYPE = os.environ.get("MODEL_TYPE", "unet")
+MODEL_TYPE = os.environ.get("MODEL_TYPE", "attention_unet")
 TARGET_SIZE = (512, 512)
 NUM_CLASSES = 4
 
 DATA_ROOT = Path(
     os.environ.get(
         "SAX_DATA_ROOT",
-        str(PROJECT_ROOT.parent / "data" / "CombinedSAX_ED_split")
+        str(PROJECT_ROOT / "data" / "CombinedSAX_ED_split")
     )
 )
 
 TEST_DIR = DATA_ROOT / "testing"
 
-MODEL_PATH = PROJECT_ROOT / "models" / "SAX_LRV" / f"{MODEL_TYPE}_sax_lrv_multiclass.pth"
+MODEL_PATH = PROJECT_ROOT / "src" / "SAX_LRV" / "models" / f"{MODEL_TYPE}_sax_lrv_multiclass_last.pth"
 
 
 def get_device():

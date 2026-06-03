@@ -15,7 +15,7 @@ from src.SAX_LRV.sax_datasetloader import find_image_label_pairs, load_nifti_wit
 from src.utils.preprocessing import normalize_image, pad_to_size
 
 
-MODEL_TYPE = os.environ.get("MODEL_TYPE", "attention_unet")
+MODEL_TYPE = os.environ.get("MODEL_TYPE", "unet")
 TARGET_SIZE = (512, 512)
 NUM_CLASSES = 4
 
@@ -28,7 +28,7 @@ DATA_ROOT = Path(
 
 TEST_DIR = DATA_ROOT / "testing"
 
-MODEL_PATH = PROJECT_ROOT / "src" / "SAX_LRV" / "models" / f"{MODEL_TYPE}_sax_lrv_multiclass_last.pth"
+MODEL_PATH = PROJECT_ROOT / "src" / "SAX_LRV" / "models neoptimizat" / f"normal_{MODEL_TYPE}_sax_lrv_multiclass_last_clean.pth"
 
 
 def get_device():

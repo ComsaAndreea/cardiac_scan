@@ -87,11 +87,7 @@ class AttentionUNetMulticlass(nn.Module):
         self.down2 = DoubleConv(64, 128)
         self.pool2 = nn.MaxPool2d(2)
 
-        #self.bottleneck = DoubleConv(128, 256)
-        self.bottleneck = nn.Sequential(
-            DoubleConv(128, 256),
-            nn.Dropout2d(0.2)
-        )
+        self.bottleneck = DoubleConv(128, 256)
 
         self.up1 = nn.ConvTranspose2d(256, 128, kernel_size=2, stride=2)
         self.att1 = AttentionGate(128, 128, 64)
@@ -122,11 +118,63 @@ class AttentionUNetMulticlass(nn.Module):
         return self.out(x)
 
 
+class UNetPlusPlusMulticlass(nn.Module):
+    def __init__(self, num_classes=4):
+        super().__init__()
+
+        filters = [64, 128, 256]
+
+        self.pool = nn.MaxPool2d(2)
+        self.up = nn.Upsample(
+            scale_factor=2,
+            mode="bilinear",
+            align_corners=True
+        )
+
+        self.conv0_0 = DoubleConv(1, filters[0])
+        self.conv1_0 = DoubleConv(filters[0], filters[1])
+        self.conv2_0 = DoubleConv(filters[1], filters[2])
+
+        self.conv0_1 = DoubleConv(filters[0] + filters[1], filters[0])
+        self.conv1_1 = DoubleConv(filters[1] + filters[2], filters[1])
+
+        self.conv0_2 = DoubleConv(filters[0] * 2 + filters[1], filters[0])
+
+        self.out = nn.Conv2d(filters[0], num_classes, kernel_size=1)
+
+    def forward(self, x):
+        x0_0 = self.conv0_0(x)
+
+        x1_0 = self.conv1_0(self.pool(x0_0))
+        x2_0 = self.conv2_0(self.pool(x1_0))
+
+        x0_1 = self.conv0_1(
+            torch.cat([x0_0, self.up(x1_0)], dim=1)
+        )
+
+        x1_1 = self.conv1_1(
+            torch.cat([x1_0, self.up(x2_0)], dim=1)
+        )
+
+        x0_2 = self.conv0_2(
+            torch.cat([x0_0, x0_1, self.up(x1_1)], dim=1)
+        )
+
+        return self.out(x0_2)
+
+
 def get_model(model_type, num_classes=4):
+    model_type = model_type.lower()
+
     if model_type == "unet":
         return UNetMulticlass(num_classes=num_classes)
 
     if model_type == "attention_unet":
         return AttentionUNetMulticlass(num_classes=num_classes)
 
-    raise ValueError("model_type trebuie să fie 'unet' sau 'attention_unet'")
+    if model_type in ["unetpp", "unet++"]:
+        return UNetPlusPlusMulticlass(num_classes=num_classes)
+
+    raise ValueError(
+        "model_type trebuie să fie 'unet', 'attention_unet' sau 'unetpp'"
+    )

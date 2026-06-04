@@ -29,7 +29,7 @@ DATA_ROOT = Path(
 
 TEST_DIR = DATA_ROOT / "testing"
 
-MODEL_DIR = PROJECT_ROOT / "src"/ "SAX_LRV" / "models neoptimizat" / "SAX_LRV"
+MODEL_DIR = PROJECT_ROOT / "src"/ "SAX_LRV" / "models neoptimizat"
 OUTPUT_DIR = PROJECT_ROOT / "experiments" / "SAX_LRV"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 

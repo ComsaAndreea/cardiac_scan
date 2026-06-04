@@ -15,7 +15,7 @@ from src.SAX_LRV.sax_datasetloader import find_image_label_pairs, load_nifti_wit
 from src.utils.preprocessing import normalize_image, pad_to_size
 
 
-MODEL_TYPE = os.environ.get("MODEL_TYPE", "unet")
+MODEL_TYPE = os.environ.get("MODEL_TYPE", "unetpp")
 TARGET_SIZE = (512, 512)
 NUM_CLASSES = 4
 

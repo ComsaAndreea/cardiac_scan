@@ -29,7 +29,7 @@ DATA_ROOT = Path(
 
 TEST_DIR = DATA_ROOT / "testing"
 
-MODEL_DIR = PROJECT_ROOT / "models" / "SAX_LRV"
+MODEL_DIR = PROJECT_ROOT / "models neoptimizat" / "SAX_LRV"
 OUTPUT_DIR = PROJECT_ROOT / "experiments" / "SAX_LRV"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -37,9 +37,9 @@ RESULTS_CSV = OUTPUT_DIR / "test_results_all_models.csv"
 SUMMARY_CSV = OUTPUT_DIR / "test_summary_all_models.csv"
 
 MODELS = {
-    "unet": MODEL_DIR / "unet_sax_lrv_multiclass_best_clean.pth",
-    "attention_unet": MODEL_DIR / "attention_unet_sax_lrv_multiclass_best_clean.pth",
-    "unetpp": MODEL_DIR / "unetpp_sax_lrv_multiclass_best_clean.pth",
+    "unet": MODEL_DIR / "normal_unet_sax_lrv_multiclass_best_clean.pth",
+    "attention_unet": MODEL_DIR / "normal_attention_unet_sax_lrv_multiclass_best_clean.pth",
+    "unetpp": MODEL_DIR / "normal_unetpp_sax_lrv_multiclass_best_clean.pth",
 }
 
 

@@ -87,8 +87,11 @@ class AttentionUNetMulticlass(nn.Module):
         self.down2 = DoubleConv(64, 128)
         self.pool2 = nn.MaxPool2d(2)
 
-        self.bottleneck = DoubleConv(128, 256)
-
+        #self.bottleneck = DoubleConv(128, 256)
+        self.bottleneck = nn.Sequential(
+            DoubleConv(128, 256),
+            nn.Dropout2d(0.2)
+        )
         self.up1 = nn.ConvTranspose2d(256, 128, kernel_size=2, stride=2)
         self.att1 = AttentionGate(128, 128, 64)
         self.conv1 = DoubleConv(256, 128)
